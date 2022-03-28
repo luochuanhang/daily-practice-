@@ -1,0 +1,17 @@
+{
+    "addr": "127.0.0.1:8080",
+    "mysql": {
+        "user": "root",
+        "password": "123456",
+        "host": "172.18.105.11:3306",
+        "db_name": "boos",
+        "charset": "utf8mb4",
+        "parse_time": "True",
+        "loc": "Local"
+    },
+    "redis": {
+        "addr": "172.18.105.11:6379",
+        "password": "",
+        "db": 0
+    }
+}
