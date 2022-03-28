@@ -1,6 +1,7 @@
 # boos 直聘后端项目学习
 
-开发人员: Leilei
+开发人员: chuanchuan
+
 
 ## 技术栈
 
