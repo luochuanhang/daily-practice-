@@ -15,26 +15,35 @@ import (
 
 //获取单个文章
 func GetArticle(c *gin.Context) {
+	//将获取的url参数转换为int
 	id := com.StrTo(c.Param("id")).MustInt()
-
+	//参数验证
 	valid := validation.Validation{}
+	//参数验证是否大于0
 	valid.Min(id, 1, "id").Message("ID必须大于0")
 
+	//错误码默认400
 	code := e.INVALID_PARAMS
 	var data interface{}
+	//参数验证是否有错  如果没有
 	if !valid.HasErrors() {
+		//判断是否存在这个id
 		if models.ExistArticleByID(id) {
+			//存在就将数据取出
 			data = models.GetArticle(id)
+			//将错误码设置成功
 			code = e.SUCCESS
 		} else {
+			//错误码这个文章不存在
 			code = e.ERROR_NOT_EXIST_ARTICLE
 		}
 	} else {
+		//记录错误日志
 		for _, err := range valid.Errors {
 			log.Printf("err.key: %s, err.message: %s", err.Key, err.Message)
 		}
 	}
-
+	//返回结果信息
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,
 		"msg":  e.GetMsg(code),
@@ -46,37 +55,45 @@ func GetArticle(c *gin.Context) {
 func GetArticles(c *gin.Context) {
 	data := make(map[string]interface{})
 	maps := make(map[string]interface{})
+	//参数验证
 	valid := validation.Validation{}
-
+	//状态码-1
 	var state int = -1
+	//获取查询参数
 	if arg := c.Query("state"); arg != "" {
+		//不为空就设置
 		state = com.StrTo(arg).MustInt()
+		//放入map
 		maps["state"] = state
-
+		//校验参数是不是0或者1
 		valid.Range(state, 0, 1, "state").Message("状态只允许0或1")
 	}
-
+	//获取tagid参数
 	var tagId int = -1
 	if arg := c.Query("tag_id"); arg != "" {
+		//不为空赋值
 		tagId = com.StrTo(arg).MustInt()
 		maps["tag_id"] = tagId
-
+		//进行参数校验
 		valid.Min(tagId, 1, "tag_id").Message("标签ID必须大于0")
 	}
-
+	//设置状态码
 	code := e.INVALID_PARAMS
 	if !valid.HasErrors() {
+		//参数校验没有问题状态码成功
 		code = e.SUCCESS
-
+		//查询多个文章
 		data["lists"] = models.GetArticles(util.GetPage(c), setting.PageSize, maps)
+		//查询总文章
 		data["total"] = models.GetArticleTotal(maps)
 
 	} else {
+		//参数校验不通过,打印日志
 		for _, err := range valid.Errors {
 			log.Printf("err.key: %s, err.message: %s", err.Key, err.Message)
 		}
 	}
-
+	//返回信息
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,
 		"msg":  e.GetMsg(code),

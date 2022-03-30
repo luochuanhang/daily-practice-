@@ -39,6 +39,7 @@ func init() {
 	if err != nil {
 		log.Println(err)
 	}
+	//默认表名处理器
 	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
 		//返回表前缀+默认表名
 		return tablePrefix + defaultTableName

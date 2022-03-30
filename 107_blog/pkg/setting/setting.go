@@ -1,5 +1,6 @@
 package setting
 
+//1读取配置文件的内容
 import (
 	"log"
 	"time"

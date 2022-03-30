@@ -20,25 +20,31 @@ type Article struct {
 	State      int    `json:"state"`
 }
 
+//新增数据发生错误将会回滚
 func (article *Article) BeforeCreate(scope *gorm.Scope) error {
 	scope.SetColumn("CreatedOn", time.Now().Unix())
 
 	return nil
 }
 
+//更新数据发生错误将会回滚
 func (article *Article) BeforeUpdate(scope *gorm.Scope) error {
 	scope.SetColumn("ModifiedOn", time.Now().Unix())
 
 	return nil
 }
+
+//是否存在这个id
 func ExistArticleByID(id int) bool {
 	var article Article
+	//查询表中的id将第一个赋值给文章模型
 	db.Select("id").Where("id = ?", id).First(&article)
-
+	//如果有数据则赋值给article 大于0就代表有数据
 	return article.ID > 0
 
 }
 
+//查询文章的总数
 func GetArticleTotal(maps interface{}) (count int) {
 	db.Model(&Article{}).Where(maps).Count(&count)
 
@@ -51,6 +57,7 @@ func GetArticles(pageNum int, pageSize int, maps interface{}) (articles []Articl
 	return
 }
 
+//查询id对应的文章，和相关的文章标签
 func GetArticle(id int) (article Article) {
 	db.Where("id = ?", id).First(&article)
 	db.Model(&article).Related(&article.Tag)
@@ -58,12 +65,14 @@ func GetArticle(id int) (article Article) {
 	return
 }
 
+//更新文章
 func EditArticle(id int, data interface{}) bool {
 	db.Model(&Article{}).Where("id = ?", id).Updates(data)
 
 	return true
 }
 
+//添加文章
 func AddArticle(data map[string]interface{}) bool {
 	db.Create(&Article{
 		TagID:     data["tag_id"].(int),
@@ -77,6 +86,7 @@ func AddArticle(data map[string]interface{}) bool {
 	return true
 }
 
+//删除文章
 func DeleteArticle(id int) bool {
 	db.Where("id = ?", id).Delete(Article{})
 
