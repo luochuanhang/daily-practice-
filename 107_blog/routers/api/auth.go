@@ -2,9 +2,9 @@ package api
 
 import (
 	"lianxi/107_blog/models"
+	"lianxi/107_blog/pkg/logging"
 	"lianxi/107_blog/pkg/setting/e"
 	"lianxi/107_blog/pkg/setting/util"
-	"log"
 	"net/http"
 
 	"github.com/astaxie/beego/validation"
@@ -57,7 +57,7 @@ func GetAuth(c *gin.Context) {
 	} else {
 		//如果参数验证不通过，打印错误
 		for _, err := range valid.Errors {
-			log.Println(err.Key, err.Message)
+			logging.Info(err.Key, err.Message)
 		}
 	}
 	//返回前端对应的数据

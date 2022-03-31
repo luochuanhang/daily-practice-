@@ -32,7 +32,7 @@ func init() {
 		类型的混合，也可以是Jbyte格式的原始数据。
 		如果列表中包含不存在的文件，则返回错误。
 	*/
-	Cfg, err = ini.Load("107_blog/conf/app.ini")
+	Cfg, err = ini.Load("conf/app.ini")
 	if err != nil {
 		/*
 			Fatalf相当于Printf()后面跟着对os.Exit(1)的调用。

@@ -2,10 +2,10 @@ package v1
 
 import (
 	"lianxi/107_blog/models"
+	"lianxi/107_blog/pkg/logging"
 	"lianxi/107_blog/pkg/setting"
 	"lianxi/107_blog/pkg/setting/e"
 	"lianxi/107_blog/pkg/setting/util"
-	"log"
 	"net/http"
 
 	"github.com/astaxie/beego/validation"
@@ -40,7 +40,7 @@ func GetArticle(c *gin.Context) {
 	} else {
 		//记录错误日志
 		for _, err := range valid.Errors {
-			log.Printf("err.key: %s, err.message: %s", err.Key, err.Message)
+			logging.Info(err.Key, err.Message)
 		}
 	}
 	//返回结果信息
@@ -90,7 +90,7 @@ func GetArticles(c *gin.Context) {
 	} else {
 		//参数校验不通过,打印日志
 		for _, err := range valid.Errors {
-			log.Printf("err.key: %s, err.message: %s", err.Key, err.Message)
+			logging.Info(err.Key, err.Message)
 		}
 	}
 	//返回信息
@@ -136,7 +136,7 @@ func AddArticle(c *gin.Context) {
 		}
 	} else {
 		for _, err := range valid.Errors {
-			log.Printf("err.key: %s, err.message: %s", err.Key, err.Message)
+			logging.Info(err.Key, err.Message)
 		}
 	}
 
@@ -201,7 +201,7 @@ func EditArticle(c *gin.Context) {
 		}
 	} else {
 		for _, err := range valid.Errors {
-			log.Printf("err.key: %s, err.message: %s", err.Key, err.Message)
+			logging.Info(err.Key, err.Message)
 		}
 	}
 
@@ -229,7 +229,7 @@ func DeleteArticle(c *gin.Context) {
 		}
 	} else {
 		for _, err := range valid.Errors {
-			log.Printf("err.key: %s, err.message: %s", err.Key, err.Message)
+			logging.Info(err.Key, err.Message)
 		}
 	}
 
