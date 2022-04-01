@@ -83,7 +83,7 @@ func GetArticles(c *gin.Context) {
 		//参数校验没有问题状态码成功
 		code = e.SUCCESS
 		//查询多个文章
-		data["lists"] = models.GetArticles(util.GetPage(c), setting.PageSize, maps)
+		data["lists"] = models.GetArticles(util.GetPage(c), setting.AppSetting.PageSize, maps)
 		//查询总文章
 		data["total"] = models.GetArticleTotal(maps)
 

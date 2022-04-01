@@ -3,9 +3,10 @@ package routers
 import (
 	_ "lianxi/107_blog/docs"
 	"lianxi/107_blog/middleware/jwt"
-	"lianxi/107_blog/pkg/setting"
+	"lianxi/107_blog/pkg/upload"
 	"lianxi/107_blog/routers/api"
 	v1 "lianxi/107_blog/routers/api/v1"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -16,9 +17,19 @@ func InitRouter() *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-	gin.SetMode(setting.RunMode)
+	gin.SetMode("debug")
+	//StaticFS的工作原理就像'Static()'，但一个自定义的'http。可以使用FileSystem'来代替。
+	/*
+		Dir使用限制在特定目录的本机文件系统实现文件系统树。
+		当文件系统。Open方法接受“分开的路径，一个Dir的字符串
+		值是本地文件系统上的文件名，而不是URL，
+		所以它被filepath分隔。”分离器,
+	*/
+	r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
+
 	r.GET("/auth", api.GetAuth)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.POST("/upload", api.UploadImage)
 	apiv1 := r.Group("/api/v1")
 	apiv1.Use(jwt.JWT())
 	{

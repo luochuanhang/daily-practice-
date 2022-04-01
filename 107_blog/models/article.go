@@ -92,3 +92,9 @@ func DeleteArticle(id int) bool {
 
 	return true
 }
+
+func CleanAllArticle() bool {
+	//注意硬删除要使用 Unscoped()，这是 GORM 的约定
+	db.Unscoped().Where("deleted_on != ? ", 0).Delete(&Article{})
+	return true
+}
