@@ -8,15 +8,17 @@ import (
 	"path"
 )
 
-// GetSize get the file size
+// GetSize 回去文件的大小
 func GetSize(f multipart.File) (int, error) {
+	//读取数据直到出现err和EOF
 	content, err := ioutil.ReadAll(f)
-
+	//根据读取数据的长度判断获得文件的大小
 	return len(content), err
 }
 
-// GetExt get the file ext
+// GetExt返回文件的后缀
 func GetExt(fileName string) string {
+	//返回最后一个最后一个斜杠，最后一个点后面的字段
 	return path.Ext(fileName)
 }
 
@@ -40,7 +42,7 @@ func CheckPermission(src string) bool {
 func IsNotExistMkDir(src string) error {
 	//检查文件是否不存在				是
 	if notExist := CheckNotExist(src); notExist {
-		//
+		//创建目录
 		if err := MkDir(src); err != nil {
 			return err
 		}
@@ -60,8 +62,9 @@ func MkDir(src string) error {
 	return nil
 }
 
-// Open a file according to a specific mode
+// Open根据特定的模式进行文件归档
 func Open(name string, flag int, perm os.FileMode) (*os.File, error) {
+	//文件不存在就根据给定模式创建，并返回file用于io
 	f, err := os.OpenFile(name, flag, perm)
 	if err != nil {
 		return nil, err
@@ -86,15 +89,15 @@ func MustOpen(fileName, filePath string) (*os.File, error) {
 		//不能访问
 		return nil, fmt.Errorf("file.CheckPermission Permission denied src: %s", src)
 	}
-	//
+	//创建一个不存在的目录
 	err = IsNotExistMkDir(src)
 	if err != nil {
 		return nil, fmt.Errorf("file.IsNotExistMkDir src: %s, err: %v", src, err)
 	}
-
+	//打开文件，不存在就创建
 	f, err := Open(src+fileName, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
-		return nil, fmt.Errorf("Fail to OpenFile :%v", err)
+		return nil, fmt.Errorf("fail to OpenFile :%v", err)
 	}
 
 	return f, nil

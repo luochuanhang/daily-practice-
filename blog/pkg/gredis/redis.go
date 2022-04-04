@@ -11,7 +11,7 @@ import (
 
 var RedisConn *redis.Pool
 
-// Setup Initialize the Redis instance
+// 初始化Redis实例
 func Setup() error {
 	RedisConn = &redis.Pool{
 		MaxIdle:     setting.RedisSetting.MaxIdle,

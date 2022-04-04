@@ -39,7 +39,8 @@ func Setup() {
 	}
 	//默认使用单数表 表名不带s
 	db.SingularTable(true)
-	//
+	//TODO:回调函数？？
+
 	db.Callback().Create().Replace("gorm:update_time_stamp", updateTimeStampForCreateCallback)
 	db.Callback().Update().Replace("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
 	db.Callback().Delete().Replace("gorm:delete", deleteCallback)
@@ -52,6 +53,7 @@ func CloseDB() {
 	defer db.Close()
 }
 
+//作用域在对数据库执行任何操作时包含当前操作的信息
 // 更新时间戳创建回调
 func updateTimeStampForCreateCallback(scope *gorm.Scope) {
 	if !scope.HasError() {
@@ -116,7 +118,7 @@ func deleteCallback(scope *gorm.Scope) {
 	}
 }
 
-// addExtraSpaceIfExist adds a separator
+// addExtraSpaceIfExist添加一个分隔符
 func addExtraSpaceIfExist(str string) string {
 	if str != "" {
 		return " " + str
