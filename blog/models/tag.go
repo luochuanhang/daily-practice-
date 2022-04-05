@@ -13,7 +13,7 @@ type Tag struct {
 	State      int    `json:"state"`
 }
 
-// ExistTagByName checks if there is a tag with the same name
+// ExistTagByName检查是否有相同名称的标签
 func ExistTagByName(name string) (bool, error) {
 	var tag Tag
 	err := db.Select("id").Where("name = ? AND deleted_on = ? ", name, 0).First(&tag).Error
@@ -42,13 +42,13 @@ func AddTag(name string, state int, createdBy string) error {
 	return nil
 }
 
-// GetTags gets a list of tags based on paging and constraints
+// GetTags根据分页和约束获得一个标记列表
 func GetTags(pageNum int, pageSize int, maps interface{}) ([]Tag, error) {
 	var (
 		tags []Tag
 		err  error
 	)
-
+	//如果页大小和页数据数
 	if pageSize > 0 && pageNum > 0 {
 		err = db.Where(maps).Find(&tags).Offset(pageNum).Limit(pageSize).Error
 	} else {

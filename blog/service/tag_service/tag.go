@@ -58,24 +58,28 @@ func (t *Tag) Delete() error {
 func (t *Tag) Count() (int, error) {
 	return models.GetTagTotal(t.getMaps())
 }
-
+//获取tag
 func (t *Tag) GetAll() ([]models.Tag, error) {
 	var (
 		tags, cacheTags []models.Tag
 	)
-
+	//创建tag实例
 	cache := cache_service.Tag{
 		State: t.State,
 
 		PageNum:  t.PageNum,
 		PageSize: t.PageSize,
 	}
+	//获取key
 	key := cache.GetTagsKey()
+	//检查redis是否存在
 	if gredis.Exists(key) {
+		//获取key中的数据
 		data, err := gredis.Get(key)
 		if err != nil {
 			logging.Info(err)
 		} else {
+			//将data反序列化为[]tag
 			json.Unmarshal(data, &cacheTags)
 			return cacheTags, nil
 		}

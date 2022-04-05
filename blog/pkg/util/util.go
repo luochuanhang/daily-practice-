@@ -2,7 +2,7 @@ package util
 
 import "lianxi/blog/pkg/setting"
 
-// Setup Initialize the util
+// Setup 设置JWT秘钥
 func Setup() {
 	jwtSecret = []byte(setting.AppSetting.JwtSecret)
 }

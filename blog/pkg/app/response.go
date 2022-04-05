@@ -6,6 +6,7 @@ import (
 	"lianxi/blog/pkg/e"
 )
 
+//简化输出json
 type Gin struct {
 	C *gin.Context
 }
@@ -16,12 +17,11 @@ type Response struct {
 	Data interface{} `json:"data"`
 }
 
-// Response setting gin.JSON
+// Response 设置 gin.JSON
 func (g *Gin) Response(httpCode, errCode int, data interface{}) {
 	g.C.JSON(httpCode, Response{
 		Code: errCode,
 		Msg:  e.GetMsg(errCode),
 		Data: data,
 	})
-	return
 }

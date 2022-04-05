@@ -6,11 +6,11 @@ import (
 	"lianxi/blog/pkg/logging"
 )
 
-// MarkErrors logs error logs
+// MarkErrors记录错误日志
 func MarkErrors(errors []*validation.Error) {
 	for _, err := range errors {
+		//将错误记录到日志
 		logging.Info(err.Key, err.Message)
 	}
 
-	return
 }

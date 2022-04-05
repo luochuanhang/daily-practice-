@@ -32,8 +32,9 @@ func init() {
 // @license.name MIT
 // @license.url https://lianxi/blog/blob/master/LICENSE
 func main() {
+	//根据字符串设置gin模式
 	gin.SetMode(setting.ServerSetting.RunMode)
-
+	//初始化路由
 	routersInit := routers.InitRouter()
 	readTimeout := setting.ServerSetting.ReadTimeout
 	writeTimeout := setting.ServerSetting.WriteTimeout

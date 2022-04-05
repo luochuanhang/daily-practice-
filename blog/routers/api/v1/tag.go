@@ -25,12 +25,15 @@ import (
 // @Router /api/v1/tags [get]
 func GetTags(c *gin.Context) {
 	appG := app.Gin{C: c}
+	//获取URI参数
 	name := c.Query("name")
 	state := -1
+	//获取URL参数
 	if arg := c.Query("state"); arg != "" {
+		//将字符串转换为指定类型
 		state = com.StrTo(arg).MustInt()
 	}
-
+	//创建tag实例
 	tagService := tag_service.Tag{
 		Name:     name,
 		State:    state,

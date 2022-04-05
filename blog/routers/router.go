@@ -18,21 +18,32 @@ import (
 	v1 "lianxi/blog/routers/api/v1"
 )
 
-// InitRouter initialize routing information
+// InitRouter 初始化路由信息
 func InitRouter() *gin.Engine {
+	//New返回一个新的空引擎实例，不附带任何中间件。
 	r := gin.New()
+	//添加中间件
+	//Logger实例一个Logger中间件，该中间件将日志写入gin.DefaultWriter。
 	r.Use(gin.Logger())
+	//Recovery返回一个中间件，它可以从任何恐慌中恢复过来，如果有的话，它会写一个500。
 	r.Use(gin.Recovery())
-
+	/*
+	StaticFS的工作原理就像'Static()'，但一个自定义的'http。
+	可以使用FileSystem'来代替。Gin默认用户:Gin . dir ()
+	*/
+	//Dir使用限制在特定目录树中的本机文件系统实现文件系统。
 	r.StaticFS("/export", http.Dir(export.GetExcelFullPath()))
 	r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
 	r.StaticFS("/qrcode", http.Dir(qrcode.GetQrCodeFullPath()))
 
 	r.POST("/auth", api.GetAuth)
+	//swagger调试
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	//上传图片
 	r.POST("/upload", api.UploadImage)
-
+	//创建一个路由组
 	apiv1 := r.Group("/api/v1")
+	//添加一个jwt中间件进行token验证
 	apiv1.Use(jwt.JWT())
 	{
 		//获取标签列表

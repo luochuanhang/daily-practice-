@@ -8,7 +8,7 @@ import (
 	"path"
 )
 
-// GetSize 回去文件的大小
+// GetSize 获取文件的大小
 func GetSize(f multipart.File) (int, error) {
 	//读取数据直到出现err和EOF
 	content, err := ioutil.ReadAll(f)

@@ -10,17 +10,18 @@ import (
 	"lianxi/blog/pkg/util"
 )
 
-// JWT is jwt middleware
+// JWT 是jwt中间件
 func JWT() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var code int
 		var data interface{}
-
 		code = e.SUCCESS
+		//获取token
 		token := c.Query("token")
 		if token == "" {
 			code = e.INVALID_PARAMS
 		} else {
+			//解析token
 			_, err := util.ParseToken(token)
 			if err != nil {
 				switch err.(*jwt.ValidationError).Errors {
@@ -38,11 +39,11 @@ func JWT() gin.HandlerFunc {
 				"msg":  e.GetMsg(code),
 				"data": data,
 			})
-
+			//不执行后续handler
 			c.Abort()
 			return
 		}
-
+		//继续执行后续handler
 		c.Next()
 	}
 }

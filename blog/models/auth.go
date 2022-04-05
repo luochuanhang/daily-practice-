@@ -8,14 +8,15 @@ type Auth struct {
 	Password string `json:"password"`
 }
 
-// CheckAuth checks if authentication information exists
+//CheckAuth检查认证信息是否存在
 func CheckAuth(username, password string) (bool, error) {
 	var auth Auth
+	//查询数据库中账号密码对应的id
 	err := db.Select("id").Where(Auth{Username: username, Password: password}).First(&auth).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
 	}
-
+	//如果id大于0,返回true
 	if auth.ID > 0 {
 		return true, nil
 	}
