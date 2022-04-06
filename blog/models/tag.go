@@ -28,7 +28,7 @@ func ExistTagByName(name string) (bool, error) {
 	return false, nil
 }
 
-// AddTag Add a Tag
+// AddTag 添加一个标签
 func AddTag(name string, state int, createdBy string) error {
 	tag := Tag{
 		Name:      name,
@@ -50,6 +50,8 @@ func GetTags(pageNum int, pageSize int, maps interface{}) ([]Tag, error) {
 	)
 	//如果页大小和页数据数
 	if pageSize > 0 && pageNum > 0 {
+		//Offset指定在开始返回记录之前要跳过的记录数
+		//Limit指定要检索的记录的数量
 		err = db.Where(maps).Find(&tags).Offset(pageNum).Limit(pageSize).Error
 	} else {
 		err = db.Where(maps).Find(&tags).Error
@@ -62,7 +64,7 @@ func GetTags(pageNum int, pageSize int, maps interface{}) ([]Tag, error) {
 	return tags, nil
 }
 
-// GetTagTotal counts the total number of tags based on the constraint
+// GetTagTotal根据约束计算标签的总数
 func GetTagTotal(maps interface{}) (int, error) {
 	var count int
 	if err := db.Model(&Tag{}).Where(maps).Count(&count).Error; err != nil {
@@ -72,7 +74,7 @@ func GetTagTotal(maps interface{}) (int, error) {
 	return count, nil
 }
 
-// ExistTagByID determines whether a Tag exists based on the ID
+// ExistTagByID根据该ID确定一个Tag是否存在
 func ExistTagByID(id int) (bool, error) {
 	var tag Tag
 	err := db.Select("id").Where("id = ? AND deleted_on = ? ", id, 0).First(&tag).Error
@@ -86,7 +88,7 @@ func ExistTagByID(id int) (bool, error) {
 	return false, nil
 }
 
-// DeleteTag delete a tag
+// DeleteTag删除标签
 func DeleteTag(id int) error {
 	if err := db.Where("id = ?", id).Delete(&Tag{}).Error; err != nil {
 		return err
@@ -95,7 +97,7 @@ func DeleteTag(id int) error {
 	return nil
 }
 
-// EditTag modify a single tag
+// EditTag 修改一个tag
 func EditTag(id int, data interface{}) error {
 	if err := db.Model(&Tag{}).Where("id = ? AND deleted_on = ? ", id, 0).Updates(data).Error; err != nil {
 		return err
@@ -104,7 +106,7 @@ func EditTag(id int, data interface{}) error {
 	return nil
 }
 
-// CleanAllTag clear all tag
+//CleanAllTag清除所有标签
 func CleanAllTag() (bool, error) {
 	if err := db.Unscoped().Where("deleted_on != ? ", 0).Delete(&Tag{}).Error; err != nil {
 		return false, err

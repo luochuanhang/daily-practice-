@@ -40,18 +40,19 @@ func GetTags(c *gin.Context) {
 		PageNum:  util.GetPage(c),
 		PageSize: setting.AppSetting.PageSize,
 	}
+	//获取tag
 	tags, err := tagService.GetAll()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_GET_TAGS_FAIL, nil)
 		return
 	}
-
+	//获取标签总数
 	count, err := tagService.Count()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_COUNT_TAG_FAIL, nil)
 		return
 	}
-
+	//将信息返回给前端
 	appG.Response(http.StatusOK, e.SUCCESS, map[string]interface{}{
 		"lists": tags,
 		"total": count,
@@ -77,18 +78,19 @@ func AddTag(c *gin.Context) {
 		appG = app.Gin{C: c}
 		form AddTagForm
 	)
-
+	//BindAndValid绑定和验证数据
 	httpCode, errCode := app.BindAndValid(c, &form)
 	if errCode != e.SUCCESS {
 		appG.Response(httpCode, errCode, nil)
 		return
 	}
-
+	//获取参数
 	tagService := tag_service.Tag{
 		Name:      form.Name,
 		CreatedBy: form.CreatedBy,
 		State:     form.State,
 	}
+	//检查是否有相同的结构体
 	exists, err := tagService.ExistByName()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_TAG_FAIL, nil)
@@ -98,13 +100,13 @@ func AddTag(c *gin.Context) {
 		appG.Response(http.StatusOK, e.ERROR_EXIST_TAG, nil)
 		return
 	}
-
+	//添加标签
 	err = tagService.Add()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_ADD_TAG_FAIL, nil)
 		return
 	}
-
+	//返回给前端
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
 
@@ -129,7 +131,7 @@ func EditTag(c *gin.Context) {
 		appG = app.Gin{C: c}
 		form = EditTagForm{ID: com.StrTo(c.Param("id")).MustInt()}
 	)
-
+	//参数校验和绑定参数
 	httpCode, errCode := app.BindAndValid(c, &form)
 	if errCode != e.SUCCESS {
 		appG.Response(httpCode, errCode, nil)
@@ -142,7 +144,7 @@ func EditTag(c *gin.Context) {
 		ModifiedBy: form.ModifiedBy,
 		State:      form.State,
 	}
-
+	//检查标签是否存在
 	exists, err := tagService.ExistByID()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_TAG_FAIL, nil)
@@ -153,13 +155,13 @@ func EditTag(c *gin.Context) {
 		appG.Response(http.StatusOK, e.ERROR_NOT_EXIST_TAG, nil)
 		return
 	}
-
+	//更新标签
 	err = tagService.Edit()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EDIT_TAG_FAIL, nil)
 		return
 	}
-
+	//返回给前端
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
 
@@ -173,14 +175,16 @@ func DeleteTag(c *gin.Context) {
 	appG := app.Gin{C: c}
 	valid := validation.Validation{}
 	id := com.StrTo(c.Param("id")).MustInt()
+	//参数校验id是否大于0
 	valid.Min(id, 1, "id").Message("ID必须大于0")
-
+	//检查参数是否有错
 	if valid.HasErrors() {
 		app.MarkErrors(valid.Errors)
 		appG.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
 	}
-
+	//绑定参数
 	tagService := tag_service.Tag{ID: id}
+	//检查是否存在
 	exists, err := tagService.ExistByID()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EXIST_TAG_FAIL, nil)
@@ -191,12 +195,12 @@ func DeleteTag(c *gin.Context) {
 		appG.Response(http.StatusOK, e.ERROR_NOT_EXIST_TAG, nil)
 		return
 	}
-
+	//删除标签
 	if err := tagService.Delete(); err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_DELETE_TAG_FAIL, nil)
 		return
 	}
-
+	//返回数据给前端
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
 
@@ -209,23 +213,26 @@ func DeleteTag(c *gin.Context) {
 // @Router /api/v1/tags/export [post]
 func ExportTag(c *gin.Context) {
 	appG := app.Gin{C: c}
+	//获取form表单名字
 	name := c.PostForm("name")
+	//状态设置-1
 	state := -1
+	//获取form表单数据
 	if arg := c.PostForm("state"); arg != "" {
 		state = com.StrTo(arg).MustInt()
 	}
-
+	//数据绑定
 	tagService := tag_service.Tag{
 		Name:  name,
 		State: state,
 	}
-
+	//导出标签
 	filename, err := tagService.Export()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_EXPORT_TAG_FAIL, nil)
 		return
 	}
-
+	//返回文件地址
 	appG.Response(http.StatusOK, e.SUCCESS, map[string]string{
 		"export_url":      export.GetExcelFullUrl(filename),
 		"export_save_url": export.GetExcelPath() + filename,
@@ -240,7 +247,7 @@ func ExportTag(c *gin.Context) {
 // @Router /api/v1/tags/import [post]
 func ImportTag(c *gin.Context) {
 	appG := app.Gin{C: c}
-
+	//获取表单文件
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {
 		logging.Warn(err)
@@ -249,6 +256,7 @@ func ImportTag(c *gin.Context) {
 	}
 
 	tagService := tag_service.Tag{}
+	//将文件中的数据放入数据库
 	err = tagService.Import(file)
 	if err != nil {
 		logging.Warn(err)

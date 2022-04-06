@@ -32,7 +32,7 @@ var MsgFlags = map[int]string{
 	ERROR_UPLOAD_CHECK_IMAGE_FORMAT: "校验图片错误，图片格式或大小有问题",
 }
 
-// GetMsg get error information based on Code
+// 获取基于Code的错误信息
 func GetMsg(code int) string {
 	msg, ok := MsgFlags[code]
 	if ok {

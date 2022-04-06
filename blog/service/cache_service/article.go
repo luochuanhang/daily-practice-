@@ -16,10 +16,12 @@ type Article struct {
 	PageSize int
 }
 
+//获取单个文章id
 func (a *Article) GetArticleKey() string {
 	return e.CACHE_ARTICLE + "_" + strconv.Itoa(a.ID)
 }
 
+//获取多个文章key
 func (a *Article) GetArticlesKey() string {
 	keys := []string{
 		e.CACHE_ARTICLE,
@@ -41,6 +43,6 @@ func (a *Article) GetArticlesKey() string {
 	if a.PageSize > 0 {
 		keys = append(keys, strconv.Itoa(a.PageSize))
 	}
-
+	//将切片通过_连接为字符串
 	return strings.Join(keys, "_")
 }
