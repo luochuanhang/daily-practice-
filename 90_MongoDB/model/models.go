@@ -11,3 +11,7 @@ type LogRecord struct {
 	Content string     `bson:"content"` //脚本输出
 	Tp      TimePorint //执行时间
 }
+//查询实体
+type FindByJobName struct {
+	JobName string `bson:"jobName"` //任务名
+ }
